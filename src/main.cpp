@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <span>
 #include <string>
 #include <vector>
 
@@ -38,6 +39,7 @@ struct Token {
 		Newline,
 		Semicolon,
 		Comma,
+		DoubleQuote,
 	};
 
 	size_t beg;
@@ -45,9 +47,9 @@ struct Token {
 	Type type;
 };
 
-#define TOK_OP(CHAR, TOKEN)                            \
-	tks.push_back(Token {index, 1, Token::Type::TOKEN}); \
-	index += 1;
+#define TOK_FIXED_SZ(SZ, TOKEN)                         \
+	tks.push_back(Token {index, SZ, Token::Type::TOKEN}); \
+	index += SZ;
 
 Token tokenize_number(str &src, size_t index) {
 	Token res {index, 1, Token::Type::Number};
@@ -79,24 +81,25 @@ std::vector<Token> tokenize(str src) {
 	while (true) {
 		if (index >= src.length()) return tks;
 		switch (src[index]) {
-			case '+': TOK_OP('+', Plus); break;
-			case '-': TOK_OP('-', Minus); break;
-			case '*': TOK_OP('*', Star); break;
-			case '=': TOK_OP('=', Equal); break;
-			case '&': TOK_OP('&', Ampersand); break;
-			case '/': TOK_OP('/', Slash); break;
-			case '!': TOK_OP('!', Bang); break;
-			case '%': TOK_OP('%', Percent); break;
-			case '^': TOK_OP('^', Caret); break;
-			case '(': TOK_OP('(', ParenOpen); break;
-			case ')': TOK_OP(')', ParenClose); break;
-			case '[': TOK_OP('[', BracketOpen); break;
-			case ']': TOK_OP(']', BracketClose); break;
-			case '{': TOK_OP('{', BraceOpen); break;
-			case '}': TOK_OP('}', BraceClose); break;
-			case '\n': TOK_OP('\n', Newline); break;
-			case ';': TOK_OP(';', Semicolon); break;
-			case ',': TOK_OP(',', Comma); break;
+			case '+': TOK_FIXED_SZ(1, Plus); break;
+			case '-': TOK_FIXED_SZ(1, Minus); break;
+			case '*': TOK_FIXED_SZ(1, Star); break;
+			case '=': TOK_FIXED_SZ(1, Equal); break;
+			case '&': TOK_FIXED_SZ(1, Ampersand); break;
+			case '/': TOK_FIXED_SZ(1, Slash); break;
+			case '!': TOK_FIXED_SZ(1, Bang); break;
+			case '%': TOK_FIXED_SZ(1, Percent); break;
+			case '^': TOK_FIXED_SZ(1, Caret); break;
+			case '(': TOK_FIXED_SZ(1, ParenOpen); break;
+			case ')': TOK_FIXED_SZ(1, ParenClose); break;
+			case '[': TOK_FIXED_SZ(1, BracketOpen); break;
+			case ']': TOK_FIXED_SZ(1, BracketClose); break;
+			case '{': TOK_FIXED_SZ(1, BraceOpen); break;
+			case '}': TOK_FIXED_SZ(1, BraceClose); break;
+			case '\n': TOK_FIXED_SZ(1, Newline); break;
+			case ';': TOK_FIXED_SZ(1, Semicolon); break;
+			case ',': TOK_FIXED_SZ(1, Comma); break;
+			case '"': TOK_FIXED_SZ(1, DoubleQuote); break;
 			case ' ':
 			case '\t': index += 1; break;
 			default:
@@ -131,12 +134,47 @@ void print_str(str &src) {
 	printf("\"\"\"\n");
 	printf("\n");
 }
-int main(int argc, char *argv[argc]) {
+
+// Concrete Syntax Tree
+struct CST {
+	enum class Type { Map, List, Number, String, App, Assignment, Symbol, Hole };
+	struct Node {
+		Type type;
+		std::vector<Node *> children;
+	};
+
+	Node *root;
+};
+
+CST::Node *parse_node(CST::Node *root, const std::span<Token> &tks) {
+	switch (tks[0].type) {
+		// <map> ::= { exps }
+		case Token::Type::BraceOpen: {
+			root = new CST::Node;
+			root->type = CST::Type::Map;
+			CST::Node *child = nullptr;
+			while ((child = parse_node(nullptr, tks.subspan(1, tks.size() - 1)))) {
+				root->children.push_back(child);
+			}
+			break;
+		}
+	}
+}
+
+CST parse(const std::span<Token> &tks) {
+	CST tree {};
+	tree.root = parse_node(tree.root, tks);
+}
+
+int main(int argc, char *argv[]) {
 	str src = read_file(argv[1]);
 	print_str(src);
-	const auto tks = tokenize(src);
+	auto tks = tokenize(src);
+	/*
 	for (auto &tk : tks) {
 		print_token(tk, src);
 	}
+	*/
+	const auto tree = parse(tks);
 	return 0;
 }
