@@ -70,26 +70,26 @@ void print_node(CST::Node *node, const str &src) {
 
 void print_tree(const CST &tree, const str &src) { print_node(tree.root, src); }
 
-void print_value(Value val) {
+void print_value(Value &val) {
 	switch (val.type) {
 		case Value::Type::Number: {
-			printf("%ld", *val.value.number);
+			printf("%ld", val.num());
 			break;
 		}
 		case Value::Type::Symbol: {
 			printf("\'");
-			print_str(*val.value.symbol);
+			print_str(*val.str());
 			break;
 		}
 		case Value::Type::String: {
 			printf("\"");
-			print_str(*val.value.string);
+			print_str(*val.str());
 			printf("\"");
 			break;
 		}
 		case Value::Type::Error:
 			printf("ERROR: ");
-			print_str(*val.value.error_msg);
+			print_str(*val.str());
 			break;
 	}
 }
@@ -109,7 +109,6 @@ int main(int argc, char *argv[]) {
 	print_tree(tree, src);
 	printf("\n");
 	Value res = eval(tree, src);
-
 	print_value(res);
 	printf("\n");
 	return res.type == Value::Type::Error;

@@ -2,8 +2,9 @@
 #define ALUAR_PARSE_HPP
 
 #include <cstdlib>
-#include <vector>
 #include <span>
+#include <vector>
+
 #include "lex.hpp"
 
 // Concrete Syntax Tree

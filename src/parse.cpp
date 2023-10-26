@@ -34,7 +34,7 @@ using Parser = size_t(const std::span<Token> &, CST::Node **);
 size_t sequence_of(
 	Parser p, const std::span<Token> &tks, std::vector<CST::Node *> &cs
 ) {
-	CST::Node *tmp = new CST::Node;
+	CST::Node *tmp = nullptr;
 	size_t read = p(tks, &tmp);
 
 	if (read > 0) {
