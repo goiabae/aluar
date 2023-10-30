@@ -35,7 +35,6 @@ Token tokenize_word(str &src, size_t index) {
 std::vector<Token> tokenize(str src) {
 	std::vector<Token> tks;
 	size_t index = 0;
-	printf("src.length() is %lu\n", src.length());
 	while (true) {
 		if (index >= src.length()) return tks;
 		switch (src[index]) {
@@ -54,6 +53,8 @@ std::vector<Token> tokenize(str src) {
 			case ']': TOK_FIXED_SZ(1, BracketClose); break;
 			case '{': TOK_FIXED_SZ(1, BraceOpen); break;
 			case '}': TOK_FIXED_SZ(1, BraceClose); break;
+			case '<': TOK_FIXED_SZ(1, LeftAngled); break;
+			case '>': TOK_FIXED_SZ(1, RightAngled); break;
 			case '\n': TOK_FIXED_SZ(1, Newline); break;
 			case ';': TOK_FIXED_SZ(1, Semicolon); break;
 			case ',': TOK_FIXED_SZ(1, Comma); break;

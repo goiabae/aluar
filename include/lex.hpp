@@ -2,8 +2,8 @@
 #define ALUAR_LEX_HPP
 
 #include <cstdlib>
-#include <vector>
 #include <string>
+#include <vector>
 
 struct Token {
 	enum class Type {
@@ -22,6 +22,8 @@ struct Token {
 		BracketClose,
 		BraceOpen,
 		BraceClose,
+		LeftAngled,
+		RightAngled,
 		Number,
 		Word,
 		Newline,

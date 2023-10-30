@@ -86,6 +86,8 @@ bool is_word(const std::span<Token> &tks) {
 		case Token::Type::BracketClose:
 		case Token::Type::BraceOpen:
 		case Token::Type::BraceClose:
+		case Token::Type::LeftAngled:
+		case Token::Type::RightAngled:
 		case Token::Type::Word:
 		case Token::Type::Semicolon:
 		case Token::Type::Comma: return true;
@@ -121,6 +123,7 @@ size_t parse_node(const std::span<Token> &tks, CST::Node **root) {
 
 CST parse(const std::span<Token> &tks) {
 	CST tree {};
-	parse_node(tks, &tree.root);
+	size_t read = parse_node(tks, &tree.root);
+	tree.success = read == tks.size();
 	return tree;
 }

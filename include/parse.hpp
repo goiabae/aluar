@@ -29,6 +29,7 @@ struct CST {
 	};
 
 	Node *root;
+	bool success;
 
 	~CST() { delete root; }
 };
