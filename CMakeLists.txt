@@ -9,7 +9,7 @@ set(CMAKE_CXX_FLAGS_DEBUG "-g3 -fsanitize=address,undefined")
 
 add_compile_options(-Wall -Wextra -Wpedantic -Wconversion)
 
-add_executable(aluar src/main.cpp src/eval.cpp src/lex.cpp src/parse.cpp src/io.cpp)
+add_executable(aluar src/main.cpp src/eval.cpp src/lex.cpp src/parse.cpp src/io.cpp src/ast.cpp)
 set_property(TARGET aluar PROPERTY CXX_STANDARD 20)
 target_include_directories(aluar PRIVATE include/)
 
